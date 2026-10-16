@@ -138,7 +138,7 @@ fun CinemaBookingScreen() {
             }
         }
 
-        // Panel de control interactivo para modificar el estado
+        // Tarjeta de selección de entradas y extras del cine
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -152,34 +152,49 @@ fun CinemaBookingScreen() {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Control de Entradas y Simulación de Aforo",
+                    text = "Selección de Entradas y Extras",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
 
-                // Botones de incremento / decremento
+                // Control de tickets
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedButton(
-                        onClick = { if (selectedTickets > 0) selectedTickets -= 5 },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("-5 Butacas")
+                    Column {
+                        Text(text = "Entradas Generales", fontWeight = FontWeight.Medium)
+                        Text(
+                            text = "S/ 15.00 c/u",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
                     }
 
-                    Button(
-                        onClick = { if (selectedTickets < totalSeats) selectedTickets += 5 },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("+5 Butacas")
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedButton(
+                            onClick = { if (selectedTickets > 0) selectedTickets-- }
+                        ) {
+                            Text("-1")
+                        }
+                        Text(
+                            text = "$selectedTickets",
+                            modifier = Modifier.padding(horizontal = 14.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Button(
+                            onClick = { if (selectedTickets < totalSeats) selectedTickets++ }
+                        ) {
+                            Text("+1")
+                        }
                     }
                 }
 
-                // Presets rápidos para probar transiciones amplias
+                // Presets de simulación rápida
                 Text(
-                    text = "Estados de aforo preestablecidos:",
+                    text = "Simulación rápida de ocupación de sala:",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -192,21 +207,45 @@ fun CinemaBookingScreen() {
                         onClick = { selectedTickets = 12 }, // 20%
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Bajo (20%)", fontSize = 12.sp)
+                        Text("20% (Bajo)", fontSize = 11.sp)
                     }
 
                     OutlinedButton(
                         onClick = { selectedTickets = 36 }, // 60%
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Medio (60%)", fontSize = 12.sp)
+                        Text("60% (Medio)", fontSize = 11.sp)
                     }
 
                     OutlinedButton(
                         onClick = { selectedTickets = 54 }, // 90%
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Lleno (90%)", fontSize = 12.sp)
+                        Text("90% (Lleno)", fontSize = 11.sp)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Resumen de precio y confirmación
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Total: S/ ${selectedTickets * 15}.00",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Button(
+                        onClick = { },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text("Confirmar Reserva")
                     }
                 }
             }
