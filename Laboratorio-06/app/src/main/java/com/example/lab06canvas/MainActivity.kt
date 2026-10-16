@@ -3,18 +3,19 @@ package com.example.lab06canvas
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -35,7 +38,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -90,38 +92,43 @@ fun CinemaBookingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(horizontal = 16.dp, vertical = 14.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         // Encabezado
-        Text(
-            text = "Cine UNSA • Sala 4DX",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Text(
-            text = "Monitoreo de Aforo y Reserva en Tiempo Real",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 4.dp, bottom = 2.dp)
+        ) {
+            Text(
+                text = "Cine UNSA • Sala 4DX",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "Monitoreo de Aforo y Reserva en Tiempo Real",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
+            )
+        }
 
         // Tarjeta principal con el recurso Canvas
         Card(
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Componente Canvas Animado
@@ -131,7 +138,7 @@ fun CinemaBookingScreen() {
                     totalSeats = totalSeats
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 // Indicador textual semántico del estado
                 OccupancyStatusBadge(occupancyRatio = occupancyRatio)
@@ -141,91 +148,121 @@ fun CinemaBookingScreen() {
         // Tarjeta de selección de entradas y extras del cine
         Card(
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "Selección de Entradas y Extras",
+                    text = "Selección de Entradas",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Bold
                 )
 
-                // Control de tickets
+                // Control de tickets (Stepper perfectamente simétrico y cuadrado)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text(text = "Entradas Generales", fontWeight = FontWeight.Medium)
                         Text(
-                            text = "S/ 15.00 c/u",
+                            text = "Entradas Generales",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "S/ 15.00 cada una",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Stepper: Botones cuadrados idénticos (40x40dp, shape RoundedCornerShape(8.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         OutlinedButton(
-                            onClick = { if (selectedTickets > 0) selectedTickets-- }
+                            onClick = { if (selectedTickets > 0) selectedTickets-- },
+                            modifier = Modifier.size(40.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(0.dp)
                         ) {
-                            Text("-1")
+                            Text("-", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         }
+
                         Text(
                             text = "$selectedTickets",
-                            modifier = Modifier.padding(horizontal = 14.dp),
+                            modifier = Modifier.widthIn(min = 36.dp),
+                            textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
+
                         Button(
-                            onClick = { if (selectedTickets < totalSeats) selectedTickets++ }
+                            onClick = { if (selectedTickets < totalSeats) selectedTickets++ },
+                            modifier = Modifier.size(40.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(0.dp)
                         ) {
-                            Text("+1")
+                            Text("+", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
 
                 // Presets de simulación rápida
                 Text(
-                    text = "Simulación rápida de ocupación de sala:",
+                    text = "Simulación rápida de ocupación:",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    OutlinedButton(
-                        onClick = { selectedTickets = 12 }, // 20%
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("20% (Bajo)", fontSize = 11.sp)
-                    }
+                    val presets = listOf(
+                        Triple("20% Bajo", 12, CapacityLow),
+                        Triple("60% Medio", 36, CapacityMedium),
+                        Triple("90% Lleno", 54, CapacityHigh)
+                    )
 
-                    OutlinedButton(
-                        onClick = { selectedTickets = 36 }, // 60%
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("60% (Medio)", fontSize = 11.sp)
-                    }
-
-                    OutlinedButton(
-                        onClick = { selectedTickets = 54 }, // 90%
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("90% (Lleno)", fontSize = 11.sp)
+                    presets.forEach { (label, seats, badgeColor) ->
+                        val isSelected = selectedTickets == seats
+                        OutlinedButton(
+                            onClick = { selectedTickets = seats },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = if (isSelected) badgeColor.copy(alpha = 0.16f) else Color.Transparent
+                            ),
+                            border = BorderStroke(
+                                width = if (isSelected) 1.5.dp else 1.dp,
+                                color = if (isSelected) badgeColor else MaterialTheme.colorScheme.outlineVariant
+                            )
+                        ) {
+                            Text(
+                                text = label,
+                                fontSize = 12.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) badgeColor else MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 // Resumen de precio y confirmación
                 Row(
@@ -233,19 +270,30 @@ fun CinemaBookingScreen() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Total: S/ ${selectedTickets * 15}.00",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column {
+                        Text(
+                            text = "Total a pagar",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = "S/ ${selectedTickets * 15}.00",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
 
                     Button(
                         onClick = { },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp)
                     ) {
-                        Text("Confirmar Reserva")
+                        Text(
+                            text = "Confirmar Reserva",
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1
+                        )
                     }
                 }
             }
@@ -302,16 +350,16 @@ fun CinemaOccupancyGauge(
     )
 
     Box(
-        modifier = modifier.size(220.dp),
+        modifier = modifier.size(210.dp),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(200.dp)) {
-            val strokeWidthPx = 22.dp.toPx()
+        Canvas(modifier = Modifier.size(190.dp)) {
+            val strokeWidthPx = 20.dp.toPx()
             val diameter = size.minDimension - strokeWidthPx
             val arcSize = Size(diameter, diameter)
             val topLeft = Offset(strokeWidthPx / 2f, strokeWidthPx / 2f)
 
-            // 1. Forma base: Pista de fondo circular (anillo gris neutro)
+            // 1. Forma base: Pista de fondo circular (anillo neutro)
             drawArc(
                 color = trackColor,
                 startAngle = -90f,
@@ -337,7 +385,7 @@ fun CinemaOccupancyGauge(
 
             // 3. Indicador central sutil: Punto focal con transparencia
             drawCircle(
-                color = animatedColor.copy(alpha = 0.12f),
+                color = animatedColor.copy(alpha = 0.10f),
                 radius = (diameter / 2f - strokeWidthPx / 2f) * animatedScale,
                 center = center
             )
@@ -363,46 +411,58 @@ fun CinemaOccupancyGauge(
 }
 
 /**
- * Rótulo semántico que explica explícitamente el significado del estado visual.
+ * Rótulo semántico tipo badge que explica explícitamente el significado del estado visual.
  */
 @Composable
 fun OccupancyStatusBadge(occupancyRatio: Float) {
     val (statusText, statusDesc, color) = when {
         occupancyRatio < 0.40f -> Triple(
             "DISPONIBILIDAD ALTA",
-            "Múltiples butacas libres en zona preferencial.",
+            "Múltiples butacas disponibles en la sala",
             CapacityLow
         )
         occupancyRatio < 0.80f -> Triple(
-            "OCUPACIÓN MODERADA",
-            "Butacas centrales ocupadas. Selección continua habilitada.",
+            "OCUPACIÓN MEDIA",
+            "Aforo intermedio, asientos continuos limitados",
             CapacityMedium
         )
         else -> Triple(
-            "SALA CASI LLENA",
-            "Quedan pocas entradas disponibles. Alta demanda.",
+            "AFORO CASI COMPLETO",
+            "Últimas butacas disponibles para esta función",
             CapacityHigh
         )
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = color.copy(alpha = 0.12f),
+        border = BorderStroke(1.dp, color.copy(alpha = 0.35f)),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = statusText,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = color,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = statusDesc,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = color,
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = statusDesc,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                maxLines = 1
+            )
+        }
     }
 }
 
